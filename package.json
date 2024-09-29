@@ -10,8 +10,12 @@
   },
   "devDependencies": {
     "@types/node": "~20.11.30",
+    "type-fest": "^4.26.1",
     "typescript": "~5.6.2",
     "vite": "~5.4.8"
   },
-  "peerDependencies": {}
+  "peerDependencies": {
+    "intl-messageformat": "~10.5.14",
+    "vue": "~3.5.10"
+  }
 }
