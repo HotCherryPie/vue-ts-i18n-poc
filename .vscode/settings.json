@@ -1,0 +1,13 @@
+{
+  "git.branchProtection": ["master"],
+
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  "vue.complete.casing.props": "camel",
+  "vue.complete.casing.tags": "pascal",
+
+  "cSpell.enableFiletypes": ["vue"],
+  "cSpell.language": "en,ru",
+  "cSpell.words": ["betslip", "browserlist", "unref"]
+}

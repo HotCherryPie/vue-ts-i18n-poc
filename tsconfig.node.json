@@ -1,0 +1,21 @@
+{
+  "include": ["./*"],
+  "extends": ["./tsconfig.base.json"],
+
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "types": ["node"],
+
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+
+    /* See: https://github.com/tsconfig/bases/blob/main/bases/node20.json */
+    "target": "ES2022",
+    "lib": ["es2023"],
+
+    /* Handled by Vite */
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
+  }
+}

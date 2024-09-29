@@ -1,0 +1,32 @@
+#
+# 27.08.24 / 92.8%
+#
+# Baseline: `inert` attribute
+#  See https://caniuse.com/mdn-api_htmlelement_inert
+#
+
+        Chrome >= 102
+ ChromeAndroid >= 102
+       Android >= 102
+          Edge >= 102   # chromium 102
+         Opera >= 88    # chromium 102
+   OperaMobile >= 71    # chromium 104
+       Samsung >= 19    # chromium 102
+        Safari >= 15.5
+           iOS >= 15.5
+       Firefox >= 112
+FirefoxAndroid >= 112
+
+# How to check Chromium versions:
+#
+#  Samsung Internet:
+#   See https://en.wikipedia.org/wiki/Samsung_Internet#Version_history
+#
+#  Opera Desktop:
+#   See https://en.wikipedia.org/wiki/History_of_the_Opera_web_browser#Blink_versions
+#
+#  Opera Mobile:
+#   See https://forums.opera.com/user/miyukiwork/posts
+#   This user usually post release notes for Opera Mobile.
+#   You need to search for topic called something like
+#   "Opera for Android 83" and find Chromium version within it.

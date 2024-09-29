@@ -1,0 +1,11 @@
+{
+  // Original configs from `create-vite`
+  //  https://github.com/vitejs/vite/blob/main/packages/create-vite/template-vue-ts/tsconfig.json
+  //  https://github.com/vitejs/vite/blob/main/packages/create-vite/template-vue-ts/tsconfig.node.json
+
+  "include": [],
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.lib.json" }
+  ]
+}
