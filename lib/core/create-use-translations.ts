@@ -34,7 +34,6 @@ export const createUseTranslations = <
   storage: S,
   options: UseTranslationsOptions = {},
 ) => {
-  // eslint-disable-next-line sonarjs/cognitive-complexity -- later.....
   return <V extends GetI18nStorageVolumeNames<S>>(volume: V) => {
     const { locale, override } = useI18n();
 
@@ -46,7 +45,6 @@ export const createUseTranslations = <
 
     watch(
       [() => locale.value.toString(), () => override.value] as const,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       async ([locale_, override_]) => {
         const dictionary = storage[locale_];
 
@@ -66,9 +64,11 @@ export const createUseTranslations = <
               dictionary[volume];
 
         // @ts-expect-error fuck template string type inference
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         let data = fetcher();
 
         if (!(data instanceof Promise)) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           strings.value = data;
           return;
         }
@@ -78,24 +78,27 @@ export const createUseTranslations = <
         //  so resolved value will be same promise.
         if (internalLoadPromise.value === data) return;
 
-        const load = Promise.withResolvers<void>();
+        const load = Promise.withResolvers<undefined>();
 
         internalLoadPromise.value = data;
         publicLoadPromise.value = load.promise;
 
         let isLoadFinished = false;
         while (!isLoadFinished) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
           isLoadFinished = await data
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             .then((it: VolumeData) => {
               if (internalLoadPromise.value !== data) return true;
 
               strings.value = it;
-              load.resolve();
+              load.resolve(undefined);
               internalLoadPromise.value = undefined;
               publicLoadPromise.value = undefined;
 
               return true;
             })
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             .catch(async (err: unknown) => {
               if (internalLoadPromise.value !== data) return true;
 
@@ -113,7 +116,9 @@ export const createUseTranslations = <
 
           if (!isLoadFinished) {
             // @ts-expect-error fuck template string type inference
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             data = fetcher();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             internalLoadPromise.value = data;
           }
         }

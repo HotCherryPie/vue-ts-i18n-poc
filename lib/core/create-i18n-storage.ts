@@ -14,6 +14,7 @@ import type {
 /**
  * Return value of `import.meta.glob`
  */
+
 type VolumeGlobImports = Record<string, () => Promise<unknown>>;
 
 type VolumeGlobImportFn = VolumeGlobImports[string];
@@ -30,16 +31,28 @@ type Cache = Map<CacheKey, CacheValue>;
 
 const formattersCache = Symbol();
 
-const wrapVolumeWithMessageBuilders = (dictionaryId: DictionaryId, volumeDataRaw: VolumeModuleData): VolumeData => {
+const wrapVolumeWithMessageBuilders = (
+  dictionaryId: DictionaryId,
+  volumeDataRaw: VolumeModuleData,
+): VolumeData => {
   const out = { [formattersCache]: {} } as VolumeData &
-    Record<typeof formattersCache, Record<MessageKey, InstanceType<typeof IntlMessageFormat>>>;
+    Record<
+      typeof formattersCache,
+      Record<MessageKey, InstanceType<typeof IntlMessageFormat>>
+    >;
 
   for (const [key, value] of Object.entries(volumeDataRaw)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     out[key] = (args: any) => {
       if (!(key in out[formattersCache]))
-        out[formattersCache][key] = new IntlMessageFormat(value, dictionaryId, undefined, { ignoreTag: true });
+        out[formattersCache][key] = new IntlMessageFormat(
+          value,
+          dictionaryId,
+          undefined,
+          { ignoreTag: true },
+        );
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unsafe-argument
       return out[formattersCache][key]!.format(args) as string;
     };
   }
@@ -48,17 +61,26 @@ const wrapVolumeWithMessageBuilders = (dictionaryId: DictionaryId, volumeDataRaw
 };
 
 const getVolumeGetter =
-  (dictionaryId: DictionaryId, cache: Cache, key: CacheKey, fetcher: VolumeGlobImportFn) => () => {
+  (
+    dictionaryId: DictionaryId,
+    cache: Cache,
+    key: CacheKey,
+    fetcher: VolumeGlobImportFn,
+  ) =>
+  () => {
     if (!cache.has(key)) {
       cache.set(
         key,
         fetcher()
           .then((module) => {
-            const data = wrapVolumeWithMessageBuilders(dictionaryId, (module as unknown as VolumeModule).default);
+            const data = wrapVolumeWithMessageBuilders(
+              dictionaryId,
+              (module as VolumeModule).default,
+            );
             cache.set(key, data);
             return data;
           })
-          .catch((err) => {
+          .catch((err: unknown) => {
             cache.delete(key);
             throw err;
           }),
@@ -69,25 +91,33 @@ const getVolumeGetter =
     return cache.get(key)!;
   };
 
-export const createI18nStorage = <I extends I18nStorageIndex>(imports: VolumeGlobImports) => {
+export const createI18nStorage = <I extends I18nStorageIndex>(
+  imports: VolumeGlobImports,
+) => {
   const cache = new Map<CacheKey, CacheValue>();
 
   return Object.entries(imports)
     .map(([k, v]) => {
-      const [dictionaryId, volumeResourceId] = k.slice(0, -3).split('/').slice(-2) as [DictionaryId, VolumeResourceId];
+      const [dictionaryId, volumeResourceId] = k
+        .slice(0, -3)
+        .split('/')
+        .slice(-2) as [DictionaryId, VolumeResourceId];
 
       const cacheKey = `${dictionaryId}/${volumeResourceId}` satisfies CacheKey;
 
-      return [dictionaryId, volumeResourceId, getVolumeGetter(dictionaryId, cache, cacheKey, v)] as const;
+      return [
+        dictionaryId,
+        volumeResourceId,
+        getVolumeGetter(dictionaryId, cache, cacheKey, v),
+      ] as const;
     })
-    .reduce(
+    .reduce<Record<DictionaryId, Record<VolumeResourceId, () => CacheValue>>>(
       (out, [dictionaryId, volumeResourceId, volumeGetter]) => {
         out[dictionaryId] = out[dictionaryId] ?? {};
 
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        out[dictionaryId]![volumeResourceId] = volumeGetter;
+        out[dictionaryId][volumeResourceId] = volumeGetter;
         return out;
       },
-      {} as Record<DictionaryId, Record<VolumeResourceId, () => CacheValue>>,
+      {},
     ) as I18nStorage<I>;
 };

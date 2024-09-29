@@ -9,5 +9,5 @@
 
   "cSpell.enableFiletypes": ["vue"],
   "cSpell.language": "en,ru",
-  "cSpell.words": ["betslip", "browserlist", "unref"]
+  "cSpell.words": ["betslip", "browserlist", "Promisable", "unref"]
 }
