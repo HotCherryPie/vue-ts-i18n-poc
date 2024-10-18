@@ -51,6 +51,7 @@ export default [
     languageOptions: { globals: globals.node },
   },
 
+  // TODO: consider using worker env
   /* ENV: Browser */
   {
     name: 'env/browser',
